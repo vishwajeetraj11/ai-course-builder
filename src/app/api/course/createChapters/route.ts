@@ -21,8 +21,9 @@ export async function POST(req: Request, res: Response) {
         if (!session?.user) {
             return new NextResponse("unauthorised", { status: 401 });
         }
-        const body = req.json();
+        const body = await req.json();
         const { title, units } = createChapterSchema.parse(body);
+
         let outputUnits: outputUnitsType = await strict_output(
             'You are an AI capable of curating course content, coming up with relevant chapter titles, and finding relevant youtube videos for each chapter',
             new Array(units.length).fill(
@@ -71,16 +72,16 @@ export async function POST(req: Request, res: Response) {
                 }),
             });
         }
-        await prisma.user.update({
-            where: {
-                id: session.user.id,
-            },
-            data: {
-                credits: {
-                    decrement: 1,
-                },
-            },
-        });
+        // await prisma.user.update({
+        //     where: {
+        //         id: session.user.id,
+        //     },
+        //     data: {
+        //         credits: {
+        //             decrement: 1,
+        //         },
+        //     },
+        // });
         return NextResponse.json({ courseId: course.id });
     } catch (error) {
         if (error instanceof ZodError) {
