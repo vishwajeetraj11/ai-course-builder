@@ -1,6 +1,6 @@
 "use client";
 import { Chapter, Course, Unit } from "@prisma/client";
-import React from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ChapterCard from "./ChapterCard";
 import { Separator } from "./ui/separator";
 import Link from "next/link";
@@ -16,6 +16,19 @@ type Props = {
 };
 
 const ConfirmChapters = ({ course }: Props) => {
+  const [fetchChapterInfo, setFetchChapterInfo] = useState(false);
+  const [completedChapters, setCompletedChapters] = useState<string[]>([]);
+
+  const disableFetchChapterInfo = () => {
+    setFetchChapterInfo(false);
+  };
+
+  const totalChaptersCount = React.useMemo(() => {
+    return course.units.reduce((acc, unit) => {
+      return acc + unit.chapters.length;
+    }, 0);
+  }, [course.units]);
+
   return (
     <div className="w-full mt-4">
       {course.units.map((unit, unitIndex) => {
@@ -30,6 +43,10 @@ const ConfirmChapters = ({ course }: Props) => {
                 return (
                   <ChapterCard
                     chapter={chapter}
+                    setCompletedChapters={setCompletedChapters}
+                    completedChapters={completedChapters}
+                    disableFetchChapterInfo={disableFetchChapterInfo}
+                    fetchChapterInfo={fetchChapterInfo}
                     chapterIndex={chapterIndex}
                     key={chapter.id}
                   />
@@ -51,10 +68,29 @@ const ConfirmChapters = ({ course }: Props) => {
             <ChevronLeft className="w-4 h-4 mr-2" strokeWidth={4} />
             Back
           </Link>
-          <Button type="button" className="ml-4 font-semibold">
-            Generate
-            <ChevronRight className="w-4 h-4 ml-2" strokeWidth={4} />
-          </Button>
+          {totalChaptersCount === completedChapters.length ? (
+            <Link
+              className={buttonVariants({
+                className: "ml-4 font-semibold",
+              })}
+              href={`/course/${course.id}/0/0`}
+            >
+              Save & Continue
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Link>
+          ) : (
+            <Button
+              disabled={fetchChapterInfo}
+              onClick={() => {
+                setFetchChapterInfo(true);
+              }}
+              type="button"
+              className="ml-4 font-semibold"
+            >
+              Generate
+              <ChevronRight className="w-4 h-4 ml-2" strokeWidth={4} />
+            </Button>
+          )}
         </div>
 
         <Separator className="flex-[1]" />
