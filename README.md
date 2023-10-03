@@ -47,3 +47,5 @@ init -
 npm i prisma --save-dev
 npm i @prisma/client
 npx prisma init --datasource-provider mysql
+- write modes in schema.prisma
+npx prisma db push
