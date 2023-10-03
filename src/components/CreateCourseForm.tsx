@@ -7,6 +7,9 @@ import { createChapterSchema } from "@/validators/course";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
+import { Button } from "./ui/button";
+import { Plus, Trash } from "lucide-react";
 type Props = {};
 
 type Input = z.infer<typeof createChapterSchema>;
@@ -20,7 +23,7 @@ const CreateCourseForm = (props: Props) => {
     },
   });
   const onSubmit = (data: Input) => {
-    console.log(data);
+    // console.log(data);
   };
   return (
     <div className="w-full">
@@ -41,6 +44,69 @@ const CreateCourseForm = (props: Props) => {
             name="title"
             control={form.control}
           />
+          {form.watch("units").map((_, index) => {
+            return (
+              <div key={index}>
+                <FormField
+                  key={index}
+                  control={form.control}
+                  name={`units.${index}`}
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="flex flex-col items-start w-full sm:items-center sm:flex-row">
+                        <FormLabel className="flex-[1] text-xl">
+                          Unit {index + 1}
+                        </FormLabel>
+                        <FormControl className="flex-[6]">
+                          <Input
+                            placeholder="Enter subtopic of the course"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+            );
+          })}
+          <div className="flex items-center justify-center mt-4">
+            <Separator className="flex-[1]" />
+            <div className="mx-4">
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold"
+                onClick={() => {
+                  form.setValue("units", [...form.watch("units"), ""]);
+                }}
+              >
+                Add Unit
+                <Plus className="w-4 h-4 ml-2 text-green-500" />
+              </Button>
+
+              <Button
+                type="button"
+                variant="secondary"
+                className="font-semibold ml-2"
+                onClick={() => {
+                  form.setValue("units", form.watch("units").slice(0, -1));
+                }}
+              >
+                Remove Unit
+                <Trash className="w-4 h-4 ml-2 text-red-500" />
+              </Button>
+            </div>
+            <Separator className="flex-[1]" />
+          </div>
+          <Button
+            // disabled={isLoading}
+            type="submit"
+            className="w-full mt-6"
+            size="lg"
+          >
+            Lets Go!
+          </Button>
         </form>
       </Form>
     </div>
