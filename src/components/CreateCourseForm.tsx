@@ -41,7 +41,6 @@ const CreateCourseForm = (props: Props) => {
     },
   });
   const onSubmit = (data: Input) => {
-    console.log(data);
     createChapters(data, {
       onSuccess: ({ courseId }) => {
         toast({
@@ -55,8 +54,6 @@ const CreateCourseForm = (props: Props) => {
       },
     });
   };
-
-  console.log(form.watch());
 
   return (
     <div className="w-full">
