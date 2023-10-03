@@ -24,6 +24,7 @@
     "next": "latest",
     "next-auth": "^4.23.2",
     "next-themes": "^0.2.1",
+    "openai": "^4.11.1",
     "react": "latest",
     "react-dom": "latest",
     "react-hook-form": "^7.47.0",
