@@ -5,6 +5,7 @@ import { strict_output } from "@/lib/gpt";
 import { getUnsplashImage } from "@/lib/unsplash";
 import { prisma } from "@/lib/db";
 import { getAuthSession } from "@/lib/auth";
+import { checkSubscription } from "@/lib/subscription";
 
 type outputUnitsType = {
     title: string,
@@ -20,6 +21,10 @@ export async function POST(req: Request, res: Response) {
         const session = await getAuthSession();
         if (!session?.user) {
             return new NextResponse("unauthorised", { status: 401 });
+        }
+        const isPro = await checkSubscription();
+        if (session.user.credits <= 0 && !isPro) {
+            return NextResponse.json({ message: 'No credits left' }, { status: 402 })
         }
         const body = await req.json();
         const { title, units } = createChapterSchema.parse(body);
