@@ -80,6 +80,7 @@ export async function GET(req: Request, res: Response) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
+
         if (error instanceof z.ZodError) {
             return NextResponse.json(
                 {
